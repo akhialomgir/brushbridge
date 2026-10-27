@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BrushBridge — 笔刷转换工作台</title>
+<meta name="description" content="在浏览器本地解析和转换 GIMP、MyPaint、Krita、Photoshop 笔刷。批量提取笔尖，导出 ABR、GBR、PNG 和可逆存档，清晰说明转换损失。">
+<meta name="theme-color" content="#186a52">
+<link rel="icon" href="./favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="./styles.css">
+<script type="module" src="./app.js"></script>
+</head>
+<body>
+<svg class="svg-defs" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>
+<symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-5-5 5 5-5 5"/></symbol>
+<symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V3m-5 5 5-5 5 5M4 15v5a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-5"/></symbol>
+<symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v13m-5-5 5 5 5-5M4 17v4h16v-4"/></symbol>
+<symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 3 9 5-9 5-9-5 9-5Zm-9 9 9 5 9-5M3 16l9 5 9-5"/></symbol>
+<symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></symbol>
+<symbol id="i-shield" viewBox="0 0 24 24"><path d="m12 3 8 3v6c0 4-5 8-8 9-3-1-8-5-8-9V6l8-3Z"/><path d="m8 12 3 3 5-6"/></symbol>
+<symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10v1"/></symbol>
+<symbol id="i-file" viewBox="0 0 24 24"><path d="M14 3H5v18h14V8l-5-5Zm0 0v5h5M8 13h8M8 17h5"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+<symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M6 18 18 6"/></symbol>
+<symbol id="i-github" viewBox="0 0 24 24"><path d="M9 19c-4 1-4-2-6-2m12 5v-4c0-1-.3-2-1-2 3-.3 6-1.4 6-6 0-1.5-.5-2.5-1.3-3.3.1-1 .1-2-.2-3.2 0 0-1-.3-3.5 1.3a12 12 0 0 0-6 0C6.5 3.2 5.5 3.5 5.5 3.5c-.3 1.2-.3 2.2-.2 3.2C4.5 7.5 4 8.5 4 10c0 4.6 3 5.7 6 6-.7.5-1 1-1 2v4"/></symbol>
+<symbol id="i-spark" viewBox="0 0 24 24"><path d="m12 3 2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5L12 3Z"/></symbol>
+</defs></svg>
+<aside class="sidebar">
+<a class="brand" href="./" aria-label="BrushBridge 首页"><span class="brand-mark"><svg viewBox="0 0 32 32" fill="none"><path d="M8 22 22 8M7 13v10h10M15 7h10v10" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>BrushBridge<span class="brand-caption">笔刷，自由流动。</span></span></a>
+<div class="nav-label">工作空间</div>
+<nav><a href="#workspace" class="nav-item active"><svg><use href="#i-layers"/></svg>转换工作台<span class="nav-dot"></span></a><button class="nav-item" id="formats-nav"><svg><use href="#i-grid"/></svg>格式兼容表<span class="nav-count">6</span></button><button class="nav-item" id="guide-nav"><svg><use href="#i-info"/></svg>使用与转换说明</button></nav>
+<div class="sidebar-card"><div class="tiny-brush"><span></span><span></span><span></span><span></span><span></span></div><h3>好笔刷，不该被格式困住。</h3><p>保留笔尖，理解差异。<br>把创作习惯带到新的画布。</p><button id="demo-side">体验演示笔刷 <span>↗</span></button></div>
+<div class="sidebar-bottom"><div class="local-dot"></div><div><strong>文件在本地处理</strong><small>不上传 · 不存储 · 无需登录</small></div><svg><use href="#i-shield"/></svg></div>
+</aside>
+<div class="app-shell" id="workspace">
+<header class="topbar"><div class="breadcrumb">工作空间 <span>/</span> <strong>转换工作台</strong></div><a class="github-link" href="https://github.com/akhialomgir/brushbridge" target="_blank" rel="noopener noreferrer"><svg><use href="#i-github"/></svg><span>GitHub</span><span class="external">↗</span></a></header>
+<main>
+<section class="page-intro"><div><div class="eyebrow"><span></span> BRUSH FORMAT WORKSPACE</div><h1>给笔刷，换一种可能<span>。</span></h1><p>从熟悉的笔触出发，在不同绘画软件间迁移你的笔尖与素材。</p></div><span class="version-badge">本地转换引擎 <span>v1.0</span></span></section>
+<section class="overview" aria-label="当前任务概览"><div class="overview-cell"><span class="stat-icon"><svg><use href="#i-file"/></svg></span><div><span class="stat-caption">已导入文件</span><strong id="file-count">0 <small>个</small></strong></div></div><div class="overview-cell"><span class="stat-icon"><svg><use href="#i-layers"/></svg></span><div><span class="stat-caption">已识别笔尖</span><strong id="tip-count">0 <small>个</small></strong></div></div><div class="overview-cell stat-last"><div><span class="stat-caption">让文件留在你的设备上</span><div class="privacy-line"><svg><use href="#i-shield"/></svg>100% 浏览器本地处理</div></div><span class="local-tag">LOCAL FIRST</span></div></section>
+<div class="workspace-grid">
+<div class="input-column">
+<section class="panel import-panel"><div class="panel-header"><h2><span class="step-number">01</span>导入笔刷</h2><span class="panel-hint">支持批量导入</span></div>
+<div class="dropzone" id="dropzone" tabindex="0" role="button" aria-label="选择或拖入笔刷文件"><div class="upload-art"><svg class="upload-card card-back" viewBox="0 0 74 88"><rect x="1" y="1" width="72" height="86" rx="10"/><path d="M20 44c15-24 24 31 36-2"/></svg><div class="upload-card card-front"><svg><use href="#i-upload"/></svg><span>BRUSH</span></div><span class="art-plus">+</span></div><h3>把你的笔刷拖到这里</h3><p>或从设备中选择文件，一次迁移一整个灵感库。</p><button class="btn btn-primary" id="choose-files"><svg><use href="#i-upload"/></svg>选择笔刷文件</button><span class="drop-limit">单文件 ≤ 64 MB · 最多 20 个 · 总计 ≤ 128 MB</span><div class="format-chips"><span>.abr</span><span>.gbr</span><span>.gih</span><span>.vbr</span><span>.myb</span><span>.kpp</span></div></div>
+<input id="file-input" type="file" multiple accept=".abr,.gbr,.gih,.vbr,.myb,.kpp,.sut,.sutg,.brush,.brushset,.brushlibrary" hidden>
+<div class="queue-toolbar" id="queue-toolbar" hidden><span id="queue-label">导入队列</span><div><button id="add-files" class="text-btn">继续添加</button><button id="clear-files" class="text-btn muted">清空</button></div></div><div id="file-list" class="file-list" aria-live="polite"></div>
+<div class="import-footer"><svg><use href="#i-spark"/></svg><span>还没有准备好文件？</span><button class="text-btn" id="demo-main">载入 6 种格式的演示 <span>↗</span></button></div></section>
+<section class="panel result-panel" id="result-panel"><div class="panel-header"><h2><span class="step-number">03</span>转换结果</h2><span id="result-tag" class="panel-hint">等待转换</span></div><div class="result-empty" id="result-empty"><span class="empty-icon"><svg><use href="#i-download"/></svg></span><div><h3>下一站，是新的画布。</h3><p>选择文件和目标格式，转换结果会出现在这里。</p></div></div><div id="result-content" hidden></div></section>
+</div>
+<aside class="output-column"><section class="panel output-panel"><div class="panel-header"><h2><span class="step-number">02</span>选择导出格式</h2></div><fieldset class="target-options"><legend class="sr-only">导出格式</legend>
+<label class="target-option selected"><input type="radio" name="target" value="abr" checked><span class="format-icon abr-icon">ABR</span><span class="target-copy"><strong>Photoshop / CSP</strong><small>采样笔尖 · .abr</small></span><span class="radio-dot"></span></label>
+<label class="target-option"><input type="radio" name="target" value="gbr"><span class="format-icon gbr-icon">GBR</span><span class="target-copy"><strong>GIMP / Krita</strong><small>位图笔尖 · .gbr</small></span><span class="radio-dot"></span></label>
+<label class="target-option"><input type="radio" name="target" value="png"><span class="format-icon png-icon">PNG</span><span class="target-copy"><strong>通用笔尖素材</strong><small>原始通道 + 透明预览</small></span><span class="radio-dot"></span></label>
+<label class="target-option"><input type="radio" name="target" value="archive"><span class="format-icon archive-icon"><svg><use href="#i-shield"/></svg></span><span class="target-copy"><strong>可逆存档</strong><small>原文件 + 参数 + SHA-256</small></span><span class="radio-dot"></span></label>
+</fieldset><div class="conversion-options"><label class="checkbox-label"><input id="allow-lossy" type="checkbox"><span><strong>允许降级与近似烘焙</strong><small>拆分多帧、彩色转蒙版，或烘焙基础形状。</small></span></label><div class="format-note" id="target-note"><svg><use href="#i-info"/></svg><p>导出为 ABR 采样笔尖。完整动态设置可能无法保留；尚未验证 CSP 导入。</p></div></div><div class="export-footer"><div class="export-summary"><span>预计可处理</span><strong id="ready-count">0 个文件</strong></div><button id="convert" class="btn btn-primary convert-btn" disabled><span>开始转换</span><svg><use href="#i-arrow"/></svg></button><span class="export-caption" id="export-caption">导入文件后即可开始</span></div></section>
+<section class="help-card"><span class="help-badge">关于保真</span><h3>保留笔尖，也说明差异。</h3><p>笔刷的手感来自绘画引擎。我们保留可迁移的数据，并列出每一步的损失。</p><button class="text-btn" id="fidelity-help">了解转换边界 <span>↗</span></button><div class="brush-line" aria-hidden="true"><svg viewBox="0 0 250 68"><path d="M8 48C58 15 61 64 113 30S173 56 240 14"/><path d="M8 54C58 21 61 70 113 36S173 62 240 20"/></svg></div></section>
+</aside>
+</div>
+<section class="software-strip"><span>已解析的来源软件</span><div><b class="software-monogram ps">Ps</b>Photoshop<small>ABR</small></div><div><b class="software-monogram gi">G</b>GIMP<small>GBR / GIH / VBR</small></div><div><b class="software-monogram kr">K</b>Krita<small>KPP</small></div><div><b class="software-monogram my">M</b>MyPaint<small>MYB</small></div></section>
+<footer class="main-footer"><span>BrushBridge <span class="footer-dot">·</span> 让笔刷自由流动</span><button class="text-btn muted" id="formats-footer">支持范围与版本限制 <span>↗</span></button></footer>
+</main>
+</div>
+<dialog id="info-dialog" aria-labelledby="dialog-title"><div class="dialog-head"><div><div class="eyebrow">BRUSHBRIDGE / GUIDE</div><h2 id="dialog-title">格式兼容表</h2></div><button id="close-dialog" class="icon-btn" aria-label="关闭说明"><svg><use href="#i-close"/></svg></button></div><div id="dialog-body"></div></dialog>
+<div id="toast" role="status" class="toast" hidden></div>
+<noscript><div class="noscript">此转换器需要 JavaScript。所有文件处理均在你的浏览器中进行。</div></noscript>
+</body></html>
